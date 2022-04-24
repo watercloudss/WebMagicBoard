@@ -5,7 +5,7 @@ module.exports = {
    * @type {boolean} true | false
    * 右侧 设置
    */
-  showSettings: true,
+  showSettings: false,
 
   /**
    * @type {boolean} true | false
