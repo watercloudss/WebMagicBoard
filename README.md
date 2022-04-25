@@ -131,6 +131,20 @@ npm run lint
 npm run lint -- --fix
 ```
 
-
+## structure
+ ```
+WebMagicBoard
+ - public                logo图标
+ - src                   主目录
+   - api                   后端请求目录
+   - assets                404页面目录
+   - components            组件目录
+   - icons                 icon图标目录
+   - lang                  国际化目录
+   - store                 处理动态加载路由目录
+   - views                 页面目录
+   - settings.js           页面设置文件
+   - permission.js         处理登录token文件   
+ ```
 
 Copyright (c) 2022 lly
