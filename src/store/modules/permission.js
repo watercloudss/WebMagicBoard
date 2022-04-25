@@ -59,15 +59,14 @@ const actions = {
     console.log('roles:', roles)
     return new Promise(resolve => {
       getRouters().then(res => {
-        console.log('菜单返回信息：', res.data)
         const sdata = JSON.parse(JSON.stringify(res.data))
         // const sd = filterAsyncRouter(sdata)
-        console.log('菜单转换为json后信息：', sdata)
         let accessedRoutes
         // accessedRoutes = filterAsyncRouter(sdata, roles)
         if (roles.includes('admin')) {
           accessedRoutes = asyncRoutes || []
         } else {
+          console.log('开始处理路由信息')
           accessedRoutes = filterAsyncRoutes(sdata, roles)
           console.log('accessedRoutes', accessedRoutes)
         }
