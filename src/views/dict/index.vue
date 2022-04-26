@@ -72,7 +72,7 @@
       <el-table-column
         prop="remark"
         label="字典描述"
-        width="180"
+        width="400"
       />
       <el-table-column
         prop="status"
@@ -93,8 +93,8 @@
         width="100"
       >
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="handleDel(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-edit" circle @click="handleEdit(scope.row)" />
+          <el-button type="danger" size="mini" icon="el-icon-delete" circle @click="handleDel(scope.row)" />
         </template>
       </el-table-column>
     </el-table>
@@ -107,11 +107,39 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <el-dialog title="字典信息" :visible.sync="dialog">
+      <el-form :model="dictData" ref="dictData" label-width="80px" :rules="dictRules">
+        <el-form-item label="字典名称" prop="dictName">
+          <el-input v-model="dictData.dictName" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="字典类型" prop="dictType">
+          <el-input v-model="dictData.dictType" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="字典描述">
+          <el-input v-model="dictData.remark" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="字典状态">
+          <el-switch v-model="switchStatus" />
+        </el-form-item>
+        <el-form-item v-if="showFlag" label="创建信息">
+          <el-col :span="8">
+            <el-input v-model="dictData.createTime" :disabled="true" style="width: 100%;" />
+          </el-col>
+          <el-col :span="8">
+            <el-input v-model="dictData.createBy" :disabled="true" style="width: 100%;" />
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="resetForm('dictData')">取 消</el-button>
+        <el-button type="primary" @click="confimEdit('dictData')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listType, delType } from '@/api/dict'
+import { listType, delType, getType, updateOrSaveType } from '@/api/dict'
 
 export default {
   data() {
@@ -119,6 +147,7 @@ export default {
       loading: true,
       currentPage: 1,
       total: 0,
+      dialog: false,
       dateRange: [],
       queryParam: {
         dictName: '',
@@ -128,7 +157,14 @@ export default {
         pageNum: 1,
         pageSize: 5
       },
-      tableData: []
+      tableData: [],
+      dictData: {},
+      switchStatus: true,
+      showFlag: true,
+      dictRules: {
+        dictName: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
+        dictType: [{ required: true, message: '请输入字典类型', trigger: 'blur' }]
+      }
     }
   },
   watch: {
@@ -146,13 +182,32 @@ export default {
       this.getList()
     },
     handleEdit(row) {
-      console.log(row)
+      this.showFlag = true
+      this.dialog = true
+      this.getTypeById(row.dictId)
+    },
+    confimEdit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.updateTypeByIdOrSave()
+        } else {
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.dialog = false
+      this.$refs[formName].resetFields()
     },
     handleQuery() {
       // 搜索框有新的输入就调用
     },
     handleAdd() {
       // 新增记录
+      this.showFlag = false
+      this.dictData = {}
+      this.switchStatus = true
+      this.dialog = true
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -189,10 +244,10 @@ export default {
           }
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消删除'
+        // })
       })
     },
     getList() {
@@ -213,6 +268,38 @@ export default {
         this.loading = false
       }
       )
+    },
+    getTypeById(dictId) {
+      getType(dictId).then(response => {
+        this.dictData = response.data
+        if (this.dictData.status === '0') {
+          this.switchStatus = false
+        } else {
+          this.switchStatus = true
+        }
+      })
+    },
+    updateTypeByIdOrSave() {
+      if (this.switchStatus) {
+        this.dictData.status = '1'
+      } else {
+        this.dictData.status = '0'
+      }
+      updateOrSaveType(this.dictData).then(response => {
+        if (response.success) {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.dialog = false
+          this.getList()
+        } else {
+          this.$message({
+            type: 'error',
+            message: '操作失败!'
+          })
+        }
+      })
     }
   }
 }
