@@ -220,7 +220,7 @@ export default {
     },
     queryList() {
       this.queryParam.pageNum = 1
-      if (this.dateRange.length > 1) {
+      if (this.dateRange && this.dateRange.length > 1) {
         this.queryParam.beginTime = this.dateRange[0]
         this.queryParam.endTime = this.dateRange[1]
       }
