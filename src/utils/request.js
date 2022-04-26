@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // url = base url + request url
   // baseURL: process.env.VUE_APP_BASE_API,
-  baseURL: 'http://localhost:9001/webmagic',
+  baseURL: 'http://localhost:9000/webmagic',
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
