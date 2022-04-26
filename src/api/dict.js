@@ -9,6 +9,24 @@ export function listType(query) {
   })
 }
 
+// 查询字典数据列表
+export function listData(query) {
+  return request({
+    url: '/sys-dict-data/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询字典数据列表
+export function listTypeGroup(query) {
+  return request({
+    url: '/sys-dict-type/getTypeGroup',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询字典类型详细
 export function getType(dictId) {
   return request({
