@@ -34,19 +34,28 @@
         <el-button type="primary" icon="el-icon-search" size="mini" @click="queryList">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
-    <el-row>
-      <el-col :span="1.5">
+      <el-form-item>
         <el-button
           type="danger"
           plain
           icon="el-icon-plus"
           size="mini"
-          style="margin-bottom:20px;"
           @click="handleAdd"
         >新增</el-button>
-      </el-col>
-    </el-row>
+      </el-form-item>
+    </el-form>
+<!--    <el-row>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          style="margin-bottom:20px;"-->
+<!--          @click="handleAdd"-->
+<!--        >新增</el-button>-->
+<!--      </el-col>-->
+<!--    </el-row>-->
 
     <el-table
       v-loading="loading"
