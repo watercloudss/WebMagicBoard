@@ -109,7 +109,7 @@
     </el-table>
     <el-pagination
       :current-page="currentPage"
-      :page-sizes="[5, 10, 15]"
+      :page-sizes="[10, 15, 20]"
       :page-size="100"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
@@ -164,7 +164,7 @@ export default {
         beginTime: '',
         endTime: '',
         pageNum: 1,
-        pageSize: 5
+        pageSize: 10
       },
       tableData: [],
       dictData: {},
