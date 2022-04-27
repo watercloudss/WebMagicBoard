@@ -229,6 +229,8 @@ export default {
     resetQuery() {
       this.queryParam.dictName = ''
       this.queryParam.dictType = ''
+      this.queryParam.beginTime = ''
+      this.queryParam.endTime = ''
       this.dateRange = []
     },
     handleDel(row) {
