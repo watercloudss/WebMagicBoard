@@ -117,17 +117,30 @@
     />
     <el-dialog title="字典信息" :visible.sync="dialog">
       <el-form :model="dictData" ref="dictData" label-width="80px" :rules="dictRules">
-        <el-form-item label="字典名称" prop="dictName">
-          <el-input v-model="dictData.dictName" autocomplete="off" />
+        <el-form-item label="名称" prop="dictLabel">
+          <el-input v-model="dictData.dictLabel" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictType">
-          <el-input v-model="dictData.dictType" autocomplete="off" />
+        <el-form-item label="编码" prop="dictValue">
+          <el-input v-model="dictData.dictValue" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="排序" prop="dictSort">
+          <el-input v-model="dictData.dictSort" autocomplete="off" />
         </el-form-item>
         <el-form-item label="字典描述">
           <el-input v-model="dictData.remark" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="字典状态">
+        <el-form-item label="状态">
           <el-switch v-model="switchStatus" />
+        </el-form-item>
+        <el-form-item label="字典类型" prop="dictType">
+          <el-select v-model="dialogValue" placeholder="请选择字典类型">
+            <el-option
+              v-for="item in options"
+              :key="item.dict_type"
+              :label="item.dict_type"
+              :value="item.dict_type">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="showFlag" label="创建信息">
           <el-col :span="8">
@@ -147,7 +160,7 @@
 </template>
 
 <script>
-import { listData, listTypeGroup, delType, getType, updateOrSaveType } from '@/api/dict'
+import { listData, listTypeGroup, delData, getData, updateOrSaveData } from '@/api/dict'
 
 export default {
   data() {
@@ -170,11 +183,12 @@ export default {
       switchStatus: true,
       showFlag: true,
       dictRules: {
-        dictName: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
-        dictType: [{ required: true, message: '请输入字典类型', trigger: 'blur' }]
+        dictLabel: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        dictValue: [{ required: true, message: '请输入编码', trigger: 'blur' }],
+        dictSort: [{ required: true, message: '请输入排序', trigger: 'blur' }]
       },
       options: [],
-      value: ''
+      dialogValue: ''
     }
   },
   watch: {
@@ -195,12 +209,12 @@ export default {
     handleEdit(row) {
       this.showFlag = true
       this.dialog = true
-      this.getTypeById(row.dictId)
+      this.getDataByDictCode(row.dictCode)
     },
     confimEdit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.updateTypeByIdOrSave()
+          this.updateDataByIdOrSave()
         } else {
           return false
         }
@@ -231,6 +245,8 @@ export default {
     resetQuery() {
       this.queryParam.name = ''
       this.queryParam.dictType = ''
+      this.queryParam.beginTime = ''
+      this.queryParam.endTime = ''
       this.dateRange = []
     },
     handleDel(row) {
@@ -240,7 +256,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 这里写删除请求
-        delType(row.dictType).then(response => {
+        delData(row.dictCode).then(response => {
           if (response.success) {
             this.$message({
               type: 'success',
@@ -263,7 +279,6 @@ export default {
     },
     getListTypeGroup() {
       listTypeGroup().then(response => {
-        console.log(response.data)
         this.options = response.data
       })
     },
@@ -286,9 +301,10 @@ export default {
       }
       )
     },
-    getTypeById(dictId) {
-      getType(dictId).then(response => {
+    getDataByDictCode(dictCode) {
+      getData(dictCode).then(response => {
         this.dictData = response.data
+        this.dialogValue = response.data.dictType
         if (this.dictData.status === '0') {
           this.switchStatus = false
         } else {
@@ -296,13 +312,15 @@ export default {
         }
       })
     },
-    updateTypeByIdOrSave() {
+    updateDataByIdOrSave() {
       if (this.switchStatus) {
         this.dictData.status = '1'
       } else {
         this.dictData.status = '0'
       }
-      updateOrSaveType(this.dictData).then(response => {
+      this.dictData.dictType = this.dialogValue
+      console.log(this.dictData)
+      updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
           this.$message({
             type: 'success',

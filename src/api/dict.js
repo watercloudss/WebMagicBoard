@@ -18,7 +18,7 @@ export function listData(query) {
   })
 }
 
-// 查询字典数据列表
+// 查询字典选择框列表
 export function listTypeGroup(query) {
   return request({
     url: '/sys-dict-type/getTypeGroup',
@@ -31,6 +31,14 @@ export function listTypeGroup(query) {
 export function getType(dictId) {
   return request({
     url: '/sys-dict-type/getDictById/' + dictId,
+    method: 'get'
+  })
+}
+
+// 查询字典数据详细
+export function getData(dictCode) {
+  return request({
+    url: '/sys-dict-data/getByDictCode/' + dictCode,
     method: 'get'
   })
 }
@@ -53,6 +61,15 @@ export function updateOrSaveType(data) {
   })
 }
 
+// 修改字典数据
+export function updateOrSaveData(data) {
+  return request({
+    url: '/sys-dict-data/updateDictByIdOrSave',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除字典类型
 export function delType(dictId) {
   return request({
@@ -61,18 +78,11 @@ export function delType(dictId) {
   })
 }
 
-// 刷新字典缓存
-export function refreshCache() {
+// 删除字典数据
+export function delData(dictCode) {
   return request({
-    url: '/system/dict/type/refreshCache',
+    url: '/sys-dict-data/del/' + dictCode,
     method: 'delete'
   })
 }
 
-// 获取字典选择框列表
-export function optionselect() {
-  return request({
-    url: '/system/dict/type/optionselect',
-    method: 'get'
-  })
-}
