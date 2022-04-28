@@ -8,6 +8,14 @@ export function listRole(query) {
   })
 }
 
+export function roleGroup(query) {
+  return request({
+    url: '/sys-role/getRoleGroup',
+    method: 'get',
+    params: query
+  })
+}
+
 export function getRole(id) {
   return request({
     url: '/sys-role/getById/' + id,

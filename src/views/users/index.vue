@@ -1,19 +1,19 @@
 <template>
   <div class="tab-container">
     <el-form ref="queryForm" :model="queryParam" size="small" :inline="true" label-width="68px">
-      <el-form-item label="角色名称" prop="dictName">
+      <el-form-item label="用户账号" prop="username">
         <el-input
-          v-model="queryParam.roleName"
-          placeholder="请输入角色名称"
+          v-model="queryParam.username"
+          placeholder="请输入用户账号"
           clearable
           style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="角色编码" prop="dictType">
+      <el-form-item label="名称" prop="name">
         <el-input
-          v-model="queryParam.roleCode"
-          placeholder="请输入角色编码"
+          v-model="queryParam.name"
+          placeholder="请输入名称"
           clearable
           style="width: 240px"
           @keyup.enter.native="handleQuery"
@@ -57,23 +57,62 @@
         width="50"
       />
       <el-table-column
-        prop="roleName"
-        label="角色名称"
+        prop="username"
+        label="用户账号"
+        width="150"
+      />
+      <el-table-column
+        prop="name"
+        label="名称"
+        width="100"
+      />
+      <el-table-column
+        prop="avatar"
+        label="头像"
+        width="55"
+      >
+        <template slot-scope="scope">
+          <el-image
+            style="width: 30px; height: 30px"
+            :src="scope.row.avatar"
+            :preview-src-list="scope.row.avatars"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="birthday"
+        label="生日"
         width="180"
       />
       <el-table-column
-        prop="roleCode"
-        label="角色编码"
+        prop="sex"
+        label="性别"
+        width="50"
+      />
+      <el-table-column
+        prop="phone"
+        label="电话"
+        width="150"
+      />
+      <el-table-column
+        prop="email"
+        label="邮箱"
         width="180"
       />
       <el-table-column
-        prop="description"
-        label="角色描述"
-        width="400"
+        prop="status"
+        label="状态"
+        width="60"
+      />
+      <el-table-column
+        prop="introduction"
+        label="描述"
+        width="300"
       />
       <el-table-column
         prop="createTime"
         label="创建时间"
+        width="160"
       />
       <el-table-column
         prop="createBy"
@@ -99,16 +138,38 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <el-dialog title="角色信息" :visible.sync="dialog">
-      <el-form :model="dictData" ref="dictData" label-width="80px" :rules="dictRules">
-        <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="dictData.roleName" autocomplete="off" />
+    <el-dialog title="用户信息" :visible.sync="dialog">
+      <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules">
+        <el-form-item label="用户账号" prop="username">
+          <el-input v-model="dictData.username" autocomplete="off" :disabled="showFlag" />
         </el-form-item>
-        <el-form-item label="角色编码" prop="roleCode">
-          <el-input v-model="dictData.roleCode" autocomplete="off" />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="dictData.name" autocomplete="off" :disabled="showFlag" />
         </el-form-item>
-        <el-form-item label="角色描述">
-          <el-input v-model="dictData.description" autocomplete="off" />
+        <el-form-item v-if="showFlag" label="头像">
+            <el-image
+              style="width: 50px; height: 50px"
+              :src="dictData.avatar"
+              :preview-src-list="dictData.avatars"
+            />
+        </el-form-item>
+        <el-form-item v-if="!showFlag" label="头像地址">
+          <el-input v-model="dictData.avatar" autocomplete="off" :disabled="showFlag" />
+        </el-form-item>
+        <el-form-item label="生日">
+          <el-input v-model="dictData.birthday" autocomplete="off" :disabled="showFlag" />
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-input v-model="dictData.sexname" autocomplete="off" :disabled="showFlag" />
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="dictData.phone" autocomplete="off" :disabled="showFlag" />
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="dictData.email" autocomplete="off" :disabled="showFlag" />
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="dictData.introduction" autocomplete="off" :disabled="showFlag" />
         </el-form-item>
         <el-form-item v-if="showFlag" label="创建信息">
           <el-col :span="8">
@@ -117,6 +178,19 @@
           <el-col :span="8">
             <el-input v-model="dictData.createBy" :disabled="true" style="width: 100%;" />
           </el-col>
+        </el-form-item>
+        <el-form-item label="角色" prop="roleCode">
+          <el-select v-model="dictData.roleCode" placeholder="请选择角色">
+            <el-option
+              v-for="item in options"
+              :key="item.role_code"
+              :label="item.role_name"
+              :value="item.role_code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-switch v-model="switchStatus" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -128,7 +202,8 @@
 </template>
 
 <script>
-import { listRole, getRole, updateOrSaveData, delRole } from '@/api/role'
+import { list, get, updateOrSaveData, del } from '@/api/users'
+import { roleGroup } from '@/api/role'
 
 export default {
   data() {
@@ -139,8 +214,8 @@ export default {
       dialog: false,
       dateRange: [],
       queryParam: {
-        roleName: '',
-        roleCode: '',
+        username: '',
+        name: '',
         beginTime: '',
         endTime: '',
         pageNum: 1,
@@ -150,15 +225,20 @@ export default {
       dictData: {},
       showFlag: true,
       dictRules: {
-        roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-        roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }]
-      }
+        username: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        roleCode: [{ required: true, message: '请选择角色', trigger: 'change' }]
+      },
+      switchStatus: true,
+      dialogValue: '',
+      options: []
     }
   },
   watch: {
   },
   created() {
     this.getList()
+    this.getListTypeGroup()
   },
   methods: {
     handleSizeChange(val) {
@@ -183,6 +263,11 @@ export default {
         }
       })
     },
+    getListTypeGroup() {
+      roleGroup().then(response => {
+        this.options = response.data
+      })
+    },
     resetForm(formName) {
       this.dialog = false
       this.$refs[formName].resetFields()
@@ -195,6 +280,7 @@ export default {
       this.showFlag = false
       this.dictData = {}
       this.dialog = true
+      this.dialogValue = ''
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -218,7 +304,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 这里写删除请求
-        delRole(row.id).then(response => {
+        del(row.id).then(response => {
           if (response.success) {
             this.$message({
               type: 'success',
@@ -241,20 +327,42 @@ export default {
     },
     getList() {
       this.loading = true
-      listRole(this.queryParam).then(response => {
+      list(this.queryParam).then(response => {
         this.tableData = response.data.records
         this.total = response.data.total
         this.currentPage = response.data.current
+        for (var i = 0; i < this.tableData.length; i++) {
+          this.tableData[i].avatars = [this.tableData[i].avatar]
+          if (this.tableData[i].sex) {
+            this.tableData[i].sex = '男'
+          } else {
+            this.tableData[i].sex = '女'
+          }
+          if (this.tableData[i].status) {
+            this.tableData[i].status = '停用'
+          } else {
+            this.tableData[i].status = '正常'
+          }
+        }
         this.loading = false
       }
       )
     },
     getTypeById(id) {
-      getRole(id).then(response => {
+      get(id).then(response => {
         this.dictData = response.data
+        if (this.dictData.sex) {
+          this.dictData.sexname = '男'
+        } else {
+          this.dictData.sexname = '女'
+        }
+        this.dictData.avatars = [this.dictData.avatar]
+        this.switchStatus = !this.dictData.status
+        this.dialogValue = this.dictData.roleCode
       })
     },
     updateTypeByIdOrSave() {
+      this.dictData.status = !this.switchStatus
       updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
           this.$message({

@@ -1,31 +1,31 @@
 import request from '@/utils/request'
 
-export function listRole(query) {
+export function list(query) {
   return request({
-    url: '/sys-role/list',
+    url: '/sys-user/list',
     method: 'get',
     params: query
   })
 }
 
-export function getRole(id) {
+export function get(id) {
   return request({
-    url: '/sys-role/getById/' + id,
+    url: '/sys-user/getById/' + id,
     method: 'get'
   })
 }
 
 export function updateOrSaveData(data) {
   return request({
-    url: '/sys-role/updateOrSave',
+    url: '/sys-user/updateOrSave',
     method: 'put',
     data: data
   })
 }
 
-export function delRole(id) {
+export function del(id) {
   return request({
-    url: '/sys-role/del/' + id,
+    url: '/sys-user/del/' + id,
     method: 'delete'
   })
 }
