@@ -233,7 +233,7 @@ export default {
       this.switchStatus = true
       this.dialog = true
       this.$refs['dictData'].resetFields()
-      this.dictData = []
+      this.dictData = {}
     },
     queryList() {
       this.queryParam.pageNum = 1
