@@ -132,8 +132,8 @@
         <el-form-item label="状态">
           <el-switch v-model="switchStatus" />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictTypeSelect">
-          <el-select v-model="dialogValue" placeholder="请选择字典类型">
+        <el-form-item label="字典类型" prop="dictType">
+          <el-select v-model="dictData.dictType" placeholder="请选择字典类型">
             <el-option
               v-for="item in options"
               :key="item.dict_type"
@@ -186,10 +186,9 @@ export default {
         dictLabel: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         dictValue: [{ required: true, message: '请输入编码', trigger: 'blur' }],
         dictSort: [{ required: true, message: '请输入排序', trigger: 'blur' }],
-        dictTypeSelect: [{ required: true, message: '请选择类型', trigger: 'blur' }]
+        dictType: [{ required: true, message: '请选择类型', trigger: 'change' }]
       },
-      options: [],
-      dialogValue: ''
+      options: []
     }
   },
   watch: {
@@ -231,10 +230,10 @@ export default {
     handleAdd() {
       // 新增记录
       this.showFlag = false
-      this.dictData = {}
       this.switchStatus = true
       this.dialog = true
-      this.dialogValue = ''
+      this.$refs['dictData'].resetFields()
+      this.dictData = []
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -306,7 +305,6 @@ export default {
     getDataByDictCode(dictCode) {
       getData(dictCode).then(response => {
         this.dictData = response.data
-        this.dialogValue = response.data.dictType
         if (this.dictData.status === '0') {
           this.switchStatus = false
         } else {
@@ -320,8 +318,6 @@ export default {
       } else {
         this.dictData.status = '0'
       }
-      this.dictData.dictType = this.dialogValue
-      console.log(this.dictData)
       updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
           this.$message({
