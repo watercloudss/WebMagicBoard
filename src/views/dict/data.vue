@@ -132,7 +132,7 @@
         <el-form-item label="状态">
           <el-switch v-model="switchStatus" />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictType">
+        <el-form-item label="字典类型" prop="dictTypeSelect">
           <el-select v-model="dialogValue" placeholder="请选择字典类型">
             <el-option
               v-for="item in options"
@@ -185,7 +185,8 @@ export default {
       dictRules: {
         dictLabel: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         dictValue: [{ required: true, message: '请输入编码', trigger: 'blur' }],
-        dictSort: [{ required: true, message: '请输入排序', trigger: 'blur' }]
+        dictSort: [{ required: true, message: '请输入排序', trigger: 'blur' }],
+        dictTypeSelect: [{ required: true, message: '请选择类型', trigger: 'blur' }]
       },
       options: [],
       dialogValue: ''
@@ -233,6 +234,7 @@ export default {
       this.dictData = {}
       this.switchStatus = true
       this.dialog = true
+      this.dialogValue = ''
     },
     queryList() {
       this.queryParam.pageNum = 1
