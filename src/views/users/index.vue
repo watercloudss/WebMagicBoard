@@ -69,11 +69,11 @@
       <el-table-column
         prop="avatar"
         label="头像"
-        width="55"
+        width="56"
       >
         <template slot-scope="scope">
           <el-image
-            style="width: 30px; height: 30px"
+            style="width: 35px; height: 35px"
             :src="scope.row.avatar"
             :preview-src-list="scope.row.avatars"
           />
@@ -160,17 +160,21 @@
           <el-input v-model="dictData.birthday" autocomplete="off" :disabled="showFlag" />
         </el-form-item>
         <el-form-item label="性别">
-          <el-radio v-model="dictData.sexname" label="1">男</el-radio>
-          <el-radio v-model="dictData.sexname" label="0">女</el-radio>
+          <template>
+            <el-radio-group v-model="dictData.sex">
+              <el-radio :label="true">男</el-radio>
+              <el-radio :label="false">女</el-radio>
+            </el-radio-group>
+          </template>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="dictData.phone" autocomplete="off" :disabled="showFlag" />
+          <el-input v-model="dictData.phone" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="邮箱">
-          <el-input v-model="dictData.email" autocomplete="off" :disabled="showFlag" />
+          <el-input v-model="dictData.email" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="dictData.introduction" autocomplete="off" :disabled="showFlag" />
+          <el-input v-model="dictData.introduction" autocomplete="off"/>
         </el-form-item>
         <el-form-item v-if="showFlag" label="创建信息">
           <el-col :span="8">
@@ -353,11 +357,6 @@ export default {
     getTypeById(id) {
       get(id).then(response => {
         this.dictData = response.data
-        if (this.dictData.sex) {
-          this.dictData.sexname = '1'
-        } else {
-          this.dictData.sexname = '0'
-        }
         this.dictData.avatars = [this.dictData.avatar]
         this.switchStatus = !this.dictData.status
         this.dialogValue = this.dictData.roleCode
@@ -365,11 +364,6 @@ export default {
     },
     updateTypeByIdOrSave() {
       this.dictData.status = !this.switchStatus
-      if (this.dictData.sexname === '1') {
-        this.dictData.sex = true
-      } else {
-        this.dictData.sex = false
-      }
       updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
           this.$message({
