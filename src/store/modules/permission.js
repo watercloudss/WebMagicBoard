@@ -1,6 +1,7 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
+import ParentView from '@/components/ParentView'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -26,6 +27,8 @@ export function filterAsyncRoutes(routes, roles) {
     const tmp = { ...route }
     if (tmp.component === 'Layout') {
       tmp.component = Layout
+    } else if (tmp.component === 'ParentView') {
+      tmp.component = ParentView
     } else {
       console.log('渲染children：')
       tmp.component = loadView(tmp.component)
