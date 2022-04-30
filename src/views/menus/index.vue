@@ -1,19 +1,10 @@
 <template>
   <div class="tab-container">
     <el-form ref="queryForm" :model="queryParam" size="small" :inline="true" label-width="68px">
-      <el-form-item label="用户账号" prop="username">
+      <el-form-item label="菜单名称" prop="title">
         <el-input
-          v-model="queryParam.username"
-          placeholder="请输入用户账号"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="名称" prop="name">
-        <el-input
-          v-model="queryParam.name"
-          placeholder="请输入名称"
+          v-model="queryParam.title"
+          placeholder="请输入菜单名称"
           clearable
           style="width: 240px"
           @keyup.enter.native="handleQuery"
@@ -48,7 +39,8 @@
     <el-table
       v-loading="loading"
       :data="tableData"
-      border
+      row-key="id"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       style="width: 100%"
     >
       <el-table-column
@@ -57,57 +49,40 @@
         width="50"
       />
       <el-table-column
-        prop="username"
-        label="用户账号"
-        width="150"
+        prop="title"
+        label="菜单名称"
+        width="120"
       />
       <el-table-column
-        prop="name"
-        label="名称"
+        prop="icon"
+        label="图标"
+        align="center"
         width="100"
-      />
-      <el-table-column
-        prop="avatar"
-        label="头像"
-        width="56"
       >
         <template slot-scope="scope">
-          <el-image
-            style="width: 35px; height: 35px"
-            :src="scope.row.avatar"
-            :preview-src-list="scope.row.avatars"
-          />
+          <svg-icon :icon-class="scope.row.icon" v-if="scope.row.icon=='system'"/>
+          <i :class="scope.row.icon" v-if="scope.row.icon"/>
         </template>
       </el-table-column>
       <el-table-column
-        prop="birthday"
-        label="生日"
-        width="180"
-      />
-      <el-table-column
-        prop="sex"
-        label="性别"
-        width="50"
-      />
-      <el-table-column
-        prop="phone"
-        label="电话"
+        prop="type"
+        label="类型"
         width="150"
       />
       <el-table-column
-        prop="email"
-        label="邮箱"
+        prop="component"
+        label="路径"
         width="180"
+      />
+      <el-table-column
+        prop="permission"
+        label="权限"
+        width="120"
       />
       <el-table-column
         prop="status"
         label="状态"
-        width="60"
-      />
-      <el-table-column
-        prop="introduction"
-        label="描述"
-        width="300"
+        width="80"
       />
       <el-table-column
         prop="createTime"
@@ -207,8 +182,8 @@
 </template>
 
 <script>
-import { list, get, updateOrSaveData, del } from '@/api/users'
-import { roleGroup } from '@/api/role'
+import { get, updateOrSaveData, del } from '@/api/users'
+import { list } from '@/api/menus'
 
 export default {
   data() {
@@ -219,8 +194,7 @@ export default {
       dialog: false,
       dateRange: [],
       queryParam: {
-        username: '',
-        name: '',
+        title: '',
         beginTime: '',
         endTime: '',
         pageNum: 1,
@@ -269,9 +243,9 @@ export default {
       })
     },
     getListTypeGroup() {
-      roleGroup().then(response => {
-        this.options = response.data
-      })
+      // roleGroup().then(response => {
+      //   this.options = response.data
+      // })
     },
     resetForm(formName) {
       this.dialog = false
