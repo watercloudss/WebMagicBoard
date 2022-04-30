@@ -74,7 +74,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('err' + error) // for debug   请求访问失败时的处理
     let { message } = error
     if (message.includes('503')) {
       message = '系统接口连接异常'
