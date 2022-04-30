@@ -171,7 +171,6 @@ export default {
     },
     handleEdit(row) {
       this.showFlag = true
-      this.dialog = true
       this.getTypeById(row.id)
     },
     confimEdit(formName) {
@@ -194,7 +193,6 @@ export default {
       // 新增记录
       this.showFlag = false
       this.dictData = {}
-      this.dialog = true
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -252,6 +250,7 @@ export default {
     getTypeById(id) {
       getRole(id).then(response => {
         this.dictData = response.data
+        this.dialog = true
       })
     },
     updateTypeByIdOrSave() {

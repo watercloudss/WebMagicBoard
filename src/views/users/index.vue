@@ -256,7 +256,6 @@ export default {
     },
     handleEdit(row) {
       this.showFlag = true
-      this.dialog = true
       this.getTypeById(row.id)
     },
     confimEdit(formName) {
@@ -360,6 +359,7 @@ export default {
         this.dictData.avatars = [this.dictData.avatar]
         this.switchStatus = !this.dictData.status
         this.dialogValue = this.dictData.roleCode
+        this.dialog = true
       })
     },
     updateTypeByIdOrSave() {

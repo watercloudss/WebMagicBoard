@@ -208,7 +208,6 @@ export default {
     },
     handleEdit(row) {
       this.showFlag = true
-      this.dialog = true
       this.getDataByDictCode(row.dictCode)
     },
     confimEdit(formName) {
@@ -231,7 +230,6 @@ export default {
       // 新增记录
       this.showFlag = false
       this.switchStatus = true
-      this.dialog = true
       this.$refs['dictData'].resetFields()
       this.dictData = {}
     },
@@ -310,6 +308,7 @@ export default {
         } else {
           this.switchStatus = true
         }
+        this.dialog = true
       })
     },
     updateDataByIdOrSave() {

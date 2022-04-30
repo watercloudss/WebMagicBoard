@@ -192,7 +192,6 @@ export default {
     },
     handleEdit(row) {
       this.showFlag = true
-      this.dialog = true
       this.getTypeById(row.dictId)
     },
     confimEdit(formName) {
@@ -216,7 +215,6 @@ export default {
       this.showFlag = false
       this.dictData = {}
       this.switchStatus = true
-      this.dialog = true
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -288,6 +286,7 @@ export default {
         } else {
           this.switchStatus = true
         }
+        this.dialog = true
       })
     },
     updateTypeByIdOrSave() {
