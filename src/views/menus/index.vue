@@ -306,13 +306,6 @@ export default {
       this.loading = true
       list(this.queryParam).then(response => {
         this.tableData = response.data
-        for (let i = 0; i < this.tableData.length; i++) {
-          if (this.tableData[i].status) {
-            this.tableData[i].status = '停用'
-          } else {
-            this.tableData[i].status = '正常'
-          }
-        }
         this.loading = false
       }
       )
