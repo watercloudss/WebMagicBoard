@@ -101,17 +101,11 @@
         </template>
       </el-table-column>
     </el-table>
-    <!--    <el-pagination-->
-    <!--      :current-page="currentPage"-->
-    <!--      :page-sizes="[10, 15, 20]"-->
-    <!--      :page-size="100"-->
-    <!--      layout="total, sizes, prev, pager, next, jumper"-->
-    <!--      :total="total"-->
-    <!--      @size-change="handleSizeChange"-->
-    <!--      @current-change="handleCurrentChange"-->
-    <!--    />-->
     <el-dialog title="用户信息" :visible.sync="dialog">
       <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules">
+        <el-form-item label="父级" prop="username">
+          <el-tree :data="dataasd" :props="defaultProps" show-checkbox  expand-on-click-node="false" @node-click="handleNodeClick" />
+        </el-form-item>
         <el-form-item label="用户账号" prop="username">
           <el-input v-model="dictData.username" autocomplete="off" :disabled="showFlag" />
         </el-form-item>
@@ -185,6 +179,26 @@ import { list } from '@/api/menus'
 export default {
   data() {
     return {
+      dataasd: [{
+        label: '根目录',
+        id: 0,
+        children: [{
+          label: '系统管理',
+          id: 1,
+          children: [{
+            label: '用户管理',
+            id: 2
+          },
+          {
+            label: '角色管理',
+            id: 3
+          }]
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
       loading: true,
       currentPage: 1,
       total: 0,
@@ -224,6 +238,9 @@ export default {
     handleCurrentChange(val) {
       this.queryParam.pageNum = val
       this.getList()
+    },
+    handleNodeClick(data) {
+      console.log(data)
     },
     handleEdit(row) {
       this.showFlag = true
