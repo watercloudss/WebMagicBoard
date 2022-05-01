@@ -44,20 +44,14 @@
       style="width: 100%"
     >
       <el-table-column
-        type="index"
-        label="序号"
-        width="50"
-      />
-      <el-table-column
         prop="title"
         label="菜单名称"
-        width="120"
       />
       <el-table-column
         prop="icon"
         label="图标"
         align="center"
-        width="100"
+        width="80"
       >
         <template slot-scope="scope">
           <svg-icon :icon-class="scope.row.icon" v-if="scope.row.icon=='system'"/>
@@ -67,22 +61,24 @@
       <el-table-column
         prop="type"
         label="类型"
+        align="center"
         width="150"
       />
       <el-table-column
         prop="component"
         label="路径"
-        width="180"
+        align="center"
       />
       <el-table-column
         prop="permission"
         label="权限"
-        width="120"
+        align="center"
       />
       <el-table-column
         prop="status"
         label="状态"
-        width="80"
+        align="center"
+        width="100"
       />
       <el-table-column
         prop="createTime"
@@ -91,6 +87,7 @@
       />
       <el-table-column
         prop="createBy"
+        align="center"
         label="创建人"
       />
       <el-table-column
@@ -104,15 +101,15 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      :current-page="currentPage"
-      :page-sizes="[10, 15, 20]"
-      :page-size="100"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+<!--    <el-pagination-->
+<!--      :current-page="currentPage"-->
+<!--      :page-sizes="[10, 15, 20]"-->
+<!--      :page-size="100"-->
+<!--      layout="total, sizes, prev, pager, next, jumper"-->
+<!--      :total="total"-->
+<!--      @size-change="handleSizeChange"-->
+<!--      @current-change="handleCurrentChange"-->
+<!--    />-->
     <el-dialog title="用户信息" :visible.sync="dialog">
       <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules">
         <el-form-item label="用户账号" prop="username">
@@ -308,10 +305,8 @@ export default {
     getList() {
       this.loading = true
       list(this.queryParam).then(response => {
-        this.tableData = response.data.records
-        this.total = response.data.total
-        this.currentPage = response.data.current
-        for (var i = 0; i < this.tableData.length; i++) {
+        this.tableData = response.data
+        for (let i = 0; i < this.tableData.length; i++) {
           this.tableData[i].avatars = [this.tableData[i].avatar]
           if (this.tableData[i].sex) {
             this.tableData[i].sex = '男'
