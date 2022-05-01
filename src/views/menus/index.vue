@@ -54,8 +54,8 @@
         width="80"
       >
         <template slot-scope="scope">
-          <svg-icon :icon-class="scope.row.icon" v-if="scope.row.icon=='system'"/>
-          <i :class="scope.row.icon" v-if="scope.row.icon"/>
+          <svg-icon v-if="!scope.row.isEl" :icon-class="scope.row.icon" />
+          <i v-if="scope.row.isEl" :class="scope.row.icon" />
         </template>
       </el-table-column>
       <el-table-column
@@ -101,15 +101,15 @@
         </template>
       </el-table-column>
     </el-table>
-<!--    <el-pagination-->
-<!--      :current-page="currentPage"-->
-<!--      :page-sizes="[10, 15, 20]"-->
-<!--      :page-size="100"-->
-<!--      layout="total, sizes, prev, pager, next, jumper"-->
-<!--      :total="total"-->
-<!--      @size-change="handleSizeChange"-->
-<!--      @current-change="handleCurrentChange"-->
-<!--    />-->
+    <!--    <el-pagination-->
+    <!--      :current-page="currentPage"-->
+    <!--      :page-sizes="[10, 15, 20]"-->
+    <!--      :page-size="100"-->
+    <!--      layout="total, sizes, prev, pager, next, jumper"-->
+    <!--      :total="total"-->
+    <!--      @size-change="handleSizeChange"-->
+    <!--      @current-change="handleCurrentChange"-->
+    <!--    />-->
     <el-dialog title="用户信息" :visible.sync="dialog">
       <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules">
         <el-form-item label="用户账号" prop="username">
@@ -140,13 +140,13 @@
           </template>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="dictData.phone" autocomplete="off"/>
+          <el-input v-model="dictData.phone" autocomplete="off" />
         </el-form-item>
         <el-form-item label="邮箱">
-          <el-input v-model="dictData.email" autocomplete="off"/>
+          <el-input v-model="dictData.email" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="dictData.introduction" autocomplete="off"/>
+          <el-input v-model="dictData.introduction" autocomplete="off" />
         </el-form-item>
         <el-form-item v-if="showFlag" label="创建信息">
           <el-col :span="8">
@@ -307,12 +307,6 @@ export default {
       list(this.queryParam).then(response => {
         this.tableData = response.data
         for (let i = 0; i < this.tableData.length; i++) {
-          this.tableData[i].avatars = [this.tableData[i].avatar]
-          if (this.tableData[i].sex) {
-            this.tableData[i].sex = '男'
-          } else {
-            this.tableData[i].sex = '女'
-          }
           if (this.tableData[i].status) {
             this.tableData[i].status = '停用'
           } else {
