@@ -212,6 +212,7 @@ export default {
     },
     handleAdd() {
       // 新增记录
+      this.dialog = true
       this.showFlag = false
       this.dictData = {}
       this.switchStatus = true
