@@ -65,6 +65,11 @@
         width="150"
       />
       <el-table-column
+        prop="name"
+        label="菜单编码"
+        align="center"
+      />
+      <el-table-column
         prop="component"
         label="路径"
         align="center"
