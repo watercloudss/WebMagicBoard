@@ -8,32 +8,32 @@ export function list(query) {
   })
 }
 
-export function roleGroup(query) {
+export function getMenusGroup(query) {
   return request({
-    url: '/sys-role/getRoleGroup',
+    url: '/sys-permission/getGroup',
     method: 'get',
     params: query
   })
 }
 
-export function getRole(id) {
+export function getPermission(id) {
   return request({
-    url: '/sys-role/getById/' + id,
+    url: '/sys-permission/getById/' + id,
     method: 'get'
   })
 }
 
 export function updateOrSaveData(data) {
   return request({
-    url: '/sys-role/updateOrSave',
+    url: '/sys-permission/updateOrSave',
     method: 'put',
     data: data
   })
 }
 
-export function delRole(id) {
+export function delPermission(id) {
   return request({
-    url: '/sys-role/del/' + id,
+    url: '/sys-permission/del/' + id,
     method: 'delete'
   })
 }

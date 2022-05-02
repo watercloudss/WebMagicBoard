@@ -54,8 +54,8 @@
         width="80"
       >
         <template slot-scope="scope">
-          <svg-icon v-if="!scope.row.isEl" :icon-class="scope.row.icon" />
-          <i v-if="scope.row.isEl" :class="scope.row.icon" />
+          <svg-icon v-if="scope.row.isEl === '2'" :icon-class="scope.row.icon" />
+          <i v-if="scope.row.isEl === '1'" :class="scope.row.icon" />
         </template>
       </el-table-column>
       <el-table-column
@@ -101,68 +101,53 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="用户信息" :visible.sync="dialog">
-      <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules">
-        <el-form-item label="父级" prop="username">
-          <el-tree :data="dataasd" :props="defaultProps" show-checkbox  expand-on-click-node="false" @node-click="handleNodeClick" />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="username">
-          <el-input v-model="dictData.username" autocomplete="off" :disabled="showFlag" />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="dictData.name" autocomplete="off" :disabled="showFlag" />
-        </el-form-item>
-        <el-form-item v-if="showFlag" label="头像">
-          <el-image
-            style="width: 50px; height: 50px"
-            :src="dictData.avatar"
-            :preview-src-list="dictData.avatars"
-          />
-        </el-form-item>
-        <el-form-item v-if="!showFlag" label="头像地址">
-          <el-input v-model="dictData.avatar" autocomplete="off" :disabled="showFlag" />
-        </el-form-item>
-        <el-form-item label="生日">
-          <el-input v-model="dictData.birthday" autocomplete="off" :disabled="showFlag" />
-        </el-form-item>
-        <el-form-item label="性别">
-          <template>
-            <el-radio-group v-model="dictData.sex">
-              <el-radio :label="true">男</el-radio>
-              <el-radio :label="false">女</el-radio>
-            </el-radio-group>
-          </template>
-        </el-form-item>
-        <el-form-item label="电话">
-          <el-input v-model="dictData.phone" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="dictData.email" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="dictData.introduction" autocomplete="off" />
-        </el-form-item>
-        <el-form-item v-if="showFlag" label="创建信息">
-          <el-col :span="8">
-            <el-input v-model="dictData.createTime" :disabled="true" style="width: 100%;" />
-          </el-col>
-          <el-col :span="8">
-            <el-input v-model="dictData.createBy" :disabled="true" style="width: 100%;" />
-          </el-col>
-        </el-form-item>
-        <el-form-item label="角色" prop="roleCode">
-          <el-select v-model="dictData.roleCode" placeholder="请选择角色">
-            <el-option
-              v-for="item in options"
-              :key="item.role_code"
-              :label="item.role_name"
-              :value="item.role_code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-switch v-model="switchStatus" />
-        </el-form-item>
+    <el-dialog title="菜单信息" :visible.sync="dialog">
+      <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules" :inline="true">
+        <el-row>
+          <el-form-item label="父级菜单" prop="parentId">
+            <el-tree ref="menuTree" node-key="id" :data="groupData" :props="defaultProps" show-checkbox check-strictly :default-expanded-keys="openId" style="font-weight: bold;" @node-click="handleNodeClick" @check-change="handleCheckChange" />
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="菜单名称" prop="title">
+            <el-input v-model="dictData.title" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="菜单排序" prop="sort">
+            <el-input v-model="dictData.sort" autocomplete="off" />
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="菜单图标" prop="icon">
+            <el-input v-model="dictData.icon" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="权限" prop="permission">
+            <el-input v-model="dictData.permission" autocomplete="off" />
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="菜单类型" prop="type">
+            <template>
+              <el-radio-group v-model="type" @change="groupRadioChange">
+                <el-radio :label="'M'">目录</el-radio>
+                <el-radio :label="'C'">菜单</el-radio>
+                <el-radio :label="'O'">按钮</el-radio>
+              </el-radio-group>
+            </template>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="状态">
+            <el-switch v-model="dictData.status" />
+          </el-form-item>
+        </el-row>
+        <el-row v-if="showFlag">
+          <el-form-item label="菜单编码" prop="name">
+            <el-input v-model="dictData.name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="页面路径" prop="component">
+            <el-input v-model="dictData.component" autocomplete="off" />
+          </el-form-item>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('dictData')">取 消</el-button>
@@ -173,28 +158,20 @@
 </template>
 
 <script>
-import { get, updateOrSaveData, del } from '@/api/users'
-import { list } from '@/api/menus'
+import { list, getMenusGroup, getPermission, updateOrSaveData, delPermission } from '@/api/menus'
 
 export default {
   data() {
+    const validateTree = (rule, value, callback) => {
+      const arr = this.$refs.menuTree.getCheckedKeys()
+      if (arr.length === 0 || !arr) {
+        callback(new Error('请选择父级菜单'))
+      } else {
+        callback()
+      }
+    }
     return {
-      dataasd: [{
-        label: '根目录',
-        id: 0,
-        children: [{
-          label: '系统管理',
-          id: 1,
-          children: [{
-            label: '用户管理',
-            id: 2
-          },
-          {
-            label: '角色管理',
-            id: 3
-          }]
-        }]
-      }],
+      groupData: [],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -212,16 +189,23 @@ export default {
         pageSize: 10
       },
       tableData: [],
+      type: 'M',
       dictData: {},
       showFlag: true,
       dictRules: {
-        username: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-        roleCode: [{ required: true, message: '请选择角色', trigger: 'change' }]
+        parentId: [{ required: true, validator: validateTree, trigger: 'change' }],
+        title: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
+        sort: [{ required: true, message: '请输入菜单排序', trigger: 'blur' }],
+        icon: [{ required: true, message: '请输入菜单图标', trigger: 'blur' }],
+        permission: [{ required: true, message: '请输入权限', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入菜单编码', trigger: 'blur' }],
+        component: [{ required: true, message: '请输入页面路径', trigger: 'blur' }]
       },
       switchStatus: true,
       dialogValue: '',
-      options: []
+      options: [],
+      treeId: 0,
+      openId: [0]
     }
   },
   watch: {
@@ -242,10 +226,18 @@ export default {
     handleNodeClick(data) {
       console.log(data)
     },
+    handleCheckChange(item, checked, self) {
+      if (checked) {
+        this.treeId = item.id
+        this.$refs.menuTree.setCheckedKeys([item.id])
+      }
+    },
     handleEdit(row) {
-      this.showFlag = true
-      this.dialog = true
-      this.getTypeById(row.id)
+      getMenusGroup().then(response => {
+        this.groupData = response.data
+        this.getPermissionById(row.id)
+        this.dialog = true
+      })
     },
     confimEdit(formName) {
       this.$refs[formName].validate((valid) => {
@@ -269,12 +261,21 @@ export default {
       // 搜索框有新的输入就调用
     },
     handleAdd() {
-      // 新增记录
-      this.showFlag = false
-      this.dialog = true
-      this.$refs['dictData'].resetFields()
       this.dictData = {}
-      this.dialogValue = ''
+      this.dictData.status = true
+      this.type = 'M'
+      this.dialog = true
+      getMenusGroup().then(response => {
+        this.groupData = response.data
+        this.$refs.menuTree.setCheckedKeys([0])
+      })
+    },
+    groupRadioChange(value) {
+      if (value === 'O') {
+        this.showFlag = false
+      } else {
+        this.showFlag = true
+      }
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -292,13 +293,13 @@ export default {
       this.dateRange = []
     },
     handleDel(row) {
-      this.$confirm('此操作将删除该数据, 是否继续?', '提示', {
+      this.$confirm('此操作将删除该数据及其子数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         // 这里写删除请求
-        del(row.id).then(response => {
+        delPermission(row.id).then(response => {
           if (response.success) {
             this.$message({
               type: 'success',
@@ -327,16 +328,50 @@ export default {
       }
       )
     },
-    getTypeById(id) {
-      get(id).then(response => {
+    getPermissionById(id) {
+      getPermission(id).then(response => {
         this.dictData = response.data
-        this.dictData.avatars = [this.dictData.avatar]
-        this.switchStatus = !this.dictData.status
-        this.dialogValue = this.dictData.roleCode
+        if (this.dictData.parentId === 0) {
+          this.$refs.menuTree.setCheckedKeys([response.data.parentId])
+        } else {
+          const arr = [response.data.parentId]
+          this.openId = arr
+          this.$refs.menuTree.setCheckedKeys([response.data.parentId])
+        }
+        this.treeId = response.data.parentId
+        if (this.dictData.status === '1') {
+          this.dictData.status = true
+        } else {
+          this.dictData.status = false
+        }
+        this.type = this.dictData.type
+        if (this.type === 'O') {
+          this.showFlag = false
+        } else {
+          this.showFlag = true
+        }
       })
+      this.getChild(id, this.groupData)
+    },
+    getChild(id, arr) {
+      for (let i = 0; i < arr.length; i++) {
+        if (id === arr[i].id) {
+          arr[i].disabled = true
+        } else {
+          if (arr[i].children !== undefined && arr[i].children.length > 0) {
+            this.getChild(id, arr[i].children)
+          }
+        }
+      }
     },
     updateTypeByIdOrSave() {
-      this.dictData.status = !this.switchStatus
+      if (this.dictData.status) {
+        this.dictData.status = '1'
+      } else {
+        this.dictData.status = '0'
+      }
+      this.dictData.type = this.type
+      this.dictData.parentId = this.treeId
       updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
           this.$message({
