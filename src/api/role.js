@@ -16,6 +16,20 @@ export function roleGroup(query) {
   })
 }
 
+export function getMenusGroup(query) {
+  return request({
+    url: '/sys-permission/getGroup/' + query,
+    method: 'get'
+  })
+}
+
+export function getRolePermissionGroup(id) {
+  return request({
+    url: '/sys-role-permission/getRolePermissionGroup/' + id,
+    method: 'get'
+  })
+}
+
 export function getRole(id) {
   return request({
     url: '/sys-role/getById/' + id,

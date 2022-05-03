@@ -238,7 +238,7 @@ export default {
       }
     },
     handleEdit(row) {
-      getMenusGroup().then(response => {
+      getMenusGroup(1).then(response => {
         this.groupData = response.data
         this.getPermissionById(row.id)
         this.dialog = true
@@ -270,7 +270,7 @@ export default {
       this.dictData.status = true
       this.type = 'M'
       this.dialog = true
-      getMenusGroup().then(response => {
+      getMenusGroup(1).then(response => {
         this.groupData = response.data
         this.$refs.menuTree.setCheckedKeys([0])
       })

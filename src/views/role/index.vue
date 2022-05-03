@@ -100,7 +100,7 @@
       @current-change="handleCurrentChange"
     />
     <el-dialog title="角色信息" :visible.sync="dialog">
-      <el-form :model="dictData" ref="dictData" label-width="80px" :rules="dictRules">
+      <el-form ref="dictData" :model="dictData" label-width="80px" :rules="dictRules">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="dictData.roleName" autocomplete="off" />
         </el-form-item>
@@ -118,6 +118,11 @@
             <el-input v-model="dictData.createBy" :disabled="true" style="width: 100%;" />
           </el-col>
         </el-form-item>
+        <el-row>
+          <el-form-item label="父级菜单" prop="parentId">
+            <el-tree ref="menuTree" node-key="id" :data="groupData" :props="defaultProps" show-checkbox :default-expanded-keys="openId" style="font-weight: bold;" @node-click="handleNodeClick" @check-change="handleCheckChange" />
+          </el-form-item>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('dictData')">取 消</el-button>
@@ -128,7 +133,7 @@
 </template>
 
 <script>
-import { listRole, getRole, updateOrSaveData, delRole } from '@/api/role'
+import { listRole, getRole, updateOrSaveData, delRole, getMenusGroup, getRolePermissionGroup } from '@/api/role'
 
 export default {
   data() {
@@ -152,7 +157,8 @@ export default {
       dictRules: {
         roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
         roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }]
-      }
+      },
+      groupData: []
     }
   },
   watch: {
@@ -172,6 +178,7 @@ export default {
     handleEdit(row) {
       this.showFlag = true
       this.getTypeById(row.id)
+      this.getMenuGroup(row.id)
     },
     confimEdit(formName) {
       this.$refs[formName].validate((valid) => {
@@ -194,6 +201,10 @@ export default {
       this.dialog = true
       this.showFlag = false
       this.dictData = {}
+      getMenusGroup(0).then(response => {
+        this.groupData = response.data
+        this.$refs.menuTree.setCheckedKeys([])
+      })
     },
     queryList() {
       this.queryParam.pageNum = 1
@@ -248,6 +259,26 @@ export default {
       }
       )
     },
+    getMenuGroup(id) {
+      getMenusGroup(0).then(response => {
+        this.groupData = response.data
+        getRolePermissionGroup(id).then(response => {
+          this.$refs.menuTree.setCheckedKeys(response.data)
+        })
+      })
+    },
+    getChild(id, arr) {
+      for (let i = 0; i < arr.length; i++) {
+        if (id === arr[i].id) {
+          this.$refs.menuTree.setCheckedKeys([])
+          arr[i].disabled = true
+        } else {
+          if (arr[i].children !== undefined && arr[i].children.length > 0) {
+            this.getChild(id, arr[i].children)
+          }
+        }
+      }
+    },
     getTypeById(id) {
       getRole(id).then(response => {
         this.dictData = response.data
@@ -255,6 +286,11 @@ export default {
       })
     },
     updateTypeByIdOrSave() {
+      const checkkeys = this.$refs.menuTree.getCheckedKeys()
+      const halfCheckedKeys = this.$refs.menuTree.getHalfCheckedKeys()
+      const allkeys = checkkeys.concat(halfCheckedKeys)
+      console.log(allkeys)
+      this.dictData.allkeys = allkeys
       updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
           this.$message({

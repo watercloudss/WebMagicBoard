@@ -10,9 +10,8 @@ export function list(query) {
 
 export function getMenusGroup(query) {
   return request({
-    url: '/sys-permission/getGroup',
-    method: 'get',
-    params: query
+    url: '/sys-permission/getGroup/' + query,
+    method: 'get'
   })
 }
 
