@@ -119,7 +119,7 @@
           </el-col>
         </el-form-item>
         <el-row>
-          <el-form-item label="父级菜单" prop="parentId">
+          <el-form-item label="拥有菜单" prop="parentId">
             <el-tree ref="menuTree" node-key="id" :data="groupData" :props="defaultProps" show-checkbox :default-expanded-keys="openId" style="font-weight: bold;" @node-click="handleNodeClick" @check-change="handleCheckChange" />
           </el-form-item>
         </el-row>
@@ -267,18 +267,6 @@ export default {
         })
       })
     },
-    getChild(id, arr) {
-      for (let i = 0; i < arr.length; i++) {
-        if (id === arr[i].id) {
-          this.$refs.menuTree.setCheckedKeys([])
-          arr[i].disabled = true
-        } else {
-          if (arr[i].children !== undefined && arr[i].children.length > 0) {
-            this.getChild(id, arr[i].children)
-          }
-        }
-      }
-    },
     getTypeById(id) {
       getRole(id).then(response => {
         this.dictData = response.data
@@ -289,7 +277,6 @@ export default {
       const checkkeys = this.$refs.menuTree.getCheckedKeys()
       const halfCheckedKeys = this.$refs.menuTree.getHalfCheckedKeys()
       const allkeys = checkkeys.concat(halfCheckedKeys)
-      console.log(allkeys)
       this.dictData.allkeys = allkeys
       updateOrSaveData(this.dictData).then(response => {
         if (response.success) {
